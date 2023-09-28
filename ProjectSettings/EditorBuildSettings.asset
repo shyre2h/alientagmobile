@@ -4,7 +4,10 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Gorilla/Gorilla Locomotion.unity
+    guid: dd85442b7d3a3f047ad9a1e3df419bcf
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: bb005733ba8cdcf469f69d2ea345220e, type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 51ef7804eef04e6448c261d3d25fd1ac, type: 2}
