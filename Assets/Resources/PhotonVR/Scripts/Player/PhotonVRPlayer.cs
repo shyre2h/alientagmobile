@@ -74,13 +74,13 @@ namespace Photon.VR.Player
 
         private void Start()
         {
-            if (!photonView.IsMine)
+            if (photonView.IsMine)
             {
                 foreach (Transform child in collidersForDetection)
                 {
 
-                    //Disable others body colliders to improve performance as detection is done on the person getting hit
-                    child.GetComponent<Collider>().enabled = false;
+                    //Enable our body colliders to get detected
+                    child.GetComponent<Collider>().enabled = true;
                 }
             }
             else
@@ -88,8 +88,8 @@ namespace Photon.VR.Player
                 foreach (Transform child in collidersPlayerDetector)
                 {
 
-                    //Disable our hand colliders so we don't detect ourselves
-                    child.GetComponent<Collider>().enabled = false;
+                    //Enable others hand colliders to detect us
+                    child.GetComponent<Collider>().enabled = true;
 
                     //Set the layer of our body part to default so we don't get detected by ourselves
                     // child.gameObject.layer = LayerMask.NameToLayer("Default");
