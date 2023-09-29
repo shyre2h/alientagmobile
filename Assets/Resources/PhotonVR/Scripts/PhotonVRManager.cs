@@ -231,7 +231,7 @@ namespace Photon.VR
                     Cosmetics.RightHand = CosmeticId;
                     break;
                 case CosmeticType.Infected:
-                    Cosmetics.RightHand = CosmeticId;
+                    Cosmetics.Infected = CosmeticId;
                     break;
             }
             Manager.Cosmetics = Cosmetics;

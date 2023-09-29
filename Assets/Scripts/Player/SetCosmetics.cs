@@ -29,17 +29,7 @@ public class SetCosmetics : MonoBehaviour
     //Called when a player gets infected from PlayerDetails
     public void SetInfectedCosmetics()
     {
-        // PhotonVRManager.SetCosmetic(CosmeticType.Infected, "true");
-
-        PhotonVRManager.SetCosmetics(new PhotonVRCosmeticsData()
-        {
-            //Head = "paper-hat1",
-            //Body = "AnarchyChain"
-            //Face = "VRSunglasses",
-            //LeftHand = "VRGlove",
-            //RightHand = "VRGlove"
-            Infected = "true"
-        });
+        PhotonVRManager.SetCosmetic(CosmeticType.Infected, "true");
     }
 
 
