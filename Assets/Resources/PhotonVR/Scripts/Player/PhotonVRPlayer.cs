@@ -20,6 +20,11 @@ namespace Photon.VR.Player
         [Tooltip("The objects that will get the colour of the player applied to them")]
         public List<MeshRenderer> ColourObjects;
 
+
+        [Header("Infection attributes")]
+        public List<SkinnedMeshRenderer> skinnedMeshRenderer;
+        public Material infectedMat;
+
         [Header("Cosmetics Parents")]
         public Transform HeadCosmetics;
         public Transform FaceCosmetics;
@@ -34,8 +39,17 @@ namespace Photon.VR.Player
         [Header("Colliders")]
         public List<Transform> collidersForDetection;
         public List<Transform> collidersPlayerDetector;
+        bool canPlay = false;
 
+        private void OnEnable()
+        {
+            GameManager.CanPlayNotifier += CanPlayListener;
+        }
 
+        private void OnDisable()
+        {
+            GameManager.CanPlayNotifier -= CanPlayListener;
+        }
         private void Awake()
         {
             if (photonView.IsMine)
@@ -152,6 +166,25 @@ namespace Photon.VR.Player
                         cos.gameObject.SetActive(false);
                     else
                         cos.gameObject.SetActive(true);
+            if (cosmetics.Infected == "true" && skinnedMeshRenderer.Count > 0)
+                foreach (SkinnedMeshRenderer cos in skinnedMeshRenderer)
+                    cos.material = infectedMat;
+        }
+
+
+        void CanPlayListener(bool value)
+        {
+            canPlay = value;
+
+            //Game started
+            if (value)
+            {
+                //TODO: This check should be done for the initial infected player and not masterclient
+                //It is masterclient below, since we are temporarily setting the first infected as so
+                if (!PhotonNetwork.IsMasterClient) return;
+
+                GetComponent<PlayerDetails>().SetInfection();
+            }
         }
     }
 }

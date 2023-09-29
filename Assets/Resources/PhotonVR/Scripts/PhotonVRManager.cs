@@ -230,6 +230,9 @@ namespace Photon.VR
                 case CosmeticType.RightHand:
                     Cosmetics.RightHand = CosmeticId;
                     break;
+                case CosmeticType.Infected:
+                    Cosmetics.RightHand = CosmeticId;
+                    break;
             }
             Manager.Cosmetics = Cosmetics;
             ExitGames.Client.Photon.Hashtable hash = PhotonNetwork.LocalPlayer.CustomProperties;

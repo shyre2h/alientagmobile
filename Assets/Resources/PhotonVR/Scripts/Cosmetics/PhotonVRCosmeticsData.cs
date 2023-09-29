@@ -13,6 +13,7 @@ namespace Photon.VR.Cosmetics
         public string Body;
         public string LeftHand;
         public string RightHand;
+        public string Infected;
     }
 
     public enum CosmeticType
@@ -22,6 +23,7 @@ namespace Photon.VR.Cosmetics
         Body,
         BothHands,
         LeftHand,
-        RightHand
+        RightHand,
+        Infected
     }
 }

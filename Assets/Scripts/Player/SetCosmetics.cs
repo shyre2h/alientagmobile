@@ -11,52 +11,36 @@ public class SetCosmetics : MonoBehaviour
     //PhotonVRManager handles RPC
     public void SetDefaultCosmetics()
     {
-        //PhotonVRManager.SetCosmetic(CosmeticType.Head, "paper-hat1");
+        // PhotonVRManager.SetCosmetic(CosmeticType.Head, "paper-hat1");
+
+        // PhotonVRManager.SetCosmetic(CosmeticType.Infected, "true");
+
         PhotonVRManager.SetCosmetics(new PhotonVRCosmeticsData()
         {
-            Head = "VRTopHat",
-            //Body = "AnarchyChain"
-            //Face = "VRSunglasses",
+            //Head = "paper-hat1",
+            // Body = "null",
+            Face = "anarchy-chain"
             //LeftHand = "VRGlove",
             //RightHand = "VRGlove"
+            // Infected = "true"
         });
     }
 
     //Called when a player gets infected from PlayerDetails
     public void SetInfectedCosmetics()
     {
-        PhotonVRManager.SetCosmetic(CosmeticType.Head, "VRTopHat");
-        // PhotonVRManager.SetCosmetics(new PhotonVRCosmeticsData()
-        // {
-        //     Head = "VRTopHat",
-        //     Face = "VRSunglasses",
-        //     LeftHand = "VRGlove",
-        //     RightHand = "VRGlove"
-        // });
+        // PhotonVRManager.SetCosmetic(CosmeticType.Infected, "true");
+
+        PhotonVRManager.SetCosmetics(new PhotonVRCosmeticsData()
+        {
+            //Head = "paper-hat1",
+            //Body = "AnarchyChain"
+            //Face = "VRSunglasses",
+            //LeftHand = "VRGlove",
+            //RightHand = "VRGlove"
+            Infected = "true"
+        });
     }
 
-    //Toggle between different hats
-    // IEnumerator ChangeCosmetic()
-    // {
-    //     int hatID = 1;
-    //     while (hatID <= 3)
-    //     {
-    //         yield return new WaitForSeconds(2f);
-    //         if (hatID == 1)
-    //         {
-    //             PhotonVRManager.SetCosmetic(CosmeticType.Head, "paper-hat1");
-    //             hatID = 2;
-    //         }
-    //         else if (hatID == 2)
-    //         {
-    //             PhotonVRManager.SetCosmetic(CosmeticType.Head, "paper-hat2");
-    //             hatID = 3;
-    //         }
-    //         else
-    //         {
-    //             PhotonVRManager.SetCosmetic(CosmeticType.Head, "paper-hat3");
-    //             hatID = 1;
-    //         }
-    //     }
-    // }
+
 }
