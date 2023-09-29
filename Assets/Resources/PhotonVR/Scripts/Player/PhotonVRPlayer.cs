@@ -31,6 +31,11 @@ namespace Photon.VR.Player
         public TextMeshPro NameText;
         public bool HideLocalPlayer = true;
 
+        [Header("Colliders")]
+        public List<Transform> collidersForDetection;
+        public List<Transform> collidersPlayerDetector;
+
+
         private void Awake()
         {
             if (photonView.IsMine)
@@ -51,6 +56,33 @@ namespace Photon.VR.Player
 
             _RefreshPlayerValues();
         }
+
+
+        private void Start()
+        {
+            if (!photonView.IsMine)
+            {
+                foreach (Transform child in collidersForDetection)
+                {
+
+                    //Disable others body colliders to improve performance as detection is done on the person getting hit
+                    child.GetComponent<Collider>().enabled = false;
+                }
+            }
+            else
+            {
+                foreach (Transform child in collidersPlayerDetector)
+                {
+
+                    //Disable our hand colliders so we don't detect ourselves
+                    child.GetComponent<Collider>().enabled = false;
+
+                    //Set the layer of our body part to default so we don't get detected by ourselves
+                    // child.gameObject.layer = LayerMask.NameToLayer("Default");
+                }
+            }
+        }
+
 
         private void Update()
         {
@@ -84,13 +116,13 @@ namespace Photon.VR.Player
             // Colour
             foreach (MeshRenderer renderer in ColourObjects)
             {
-                if(renderer != null)
+                if (renderer != null)
                     renderer.material.color = JsonUtility.FromJson<Color>((string)photonView.Owner.CustomProperties["Colour"]);
             }
 
             // Cosmetics - it's a little ugly to look at
             PhotonVRCosmeticsData cosmetics = JsonUtility.FromJson<PhotonVRCosmeticsData>((string)photonView.Owner.CustomProperties["Cosmetics"]);
-            if(HeadCosmetics != null)
+            if (HeadCosmetics != null)
                 foreach (Transform cos in HeadCosmetics)
                     if (cos.name != cosmetics.Head)
                         cos.gameObject.SetActive(false);

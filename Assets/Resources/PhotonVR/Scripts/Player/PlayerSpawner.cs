@@ -15,6 +15,13 @@ namespace Photon.VR.Player
         public override void OnJoinedRoom()
         {
             playerTemp = PhotonNetwork.Instantiate(PrefabLocation, Vector3.zero, Quaternion.identity);
+
+
+            //Set the player's cosmetics after joining
+            SetCosmetics setCosmetics;
+            playerTemp.TryGetComponent<SetCosmetics>(out setCosmetics);
+            if (setCosmetics)
+                setCosmetics.SetDefaultCosmetics();
         }
 
         public override void OnLeftRoom()
