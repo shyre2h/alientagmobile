@@ -10,11 +10,12 @@ public class HitSoundSetter : MonoBehaviour
 
     public enum SurfaceType
     {
+
+        Rock,
+        Brick,
         Grass,
         Wood,
-        Rock,
-        Sand,
-        Brick
+        Sand
     }
 
     public SurfaceType surfaceType;

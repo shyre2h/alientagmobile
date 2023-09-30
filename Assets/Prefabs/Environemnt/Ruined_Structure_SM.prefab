@@ -111,4 +111,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2433bb209269fde4da9e3fe2156b125d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  surfaceType: 4
+  surfaceType: 1
