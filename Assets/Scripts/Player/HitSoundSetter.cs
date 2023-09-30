@@ -13,7 +13,8 @@ public class HitSoundSetter : MonoBehaviour
         Grass,
         Wood,
         Rock,
-        Sand
+        Sand,
+        Brick
     }
 
     public SurfaceType surfaceType;
