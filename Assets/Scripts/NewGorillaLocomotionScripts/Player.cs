@@ -1,6 +1,7 @@
 ﻿namespace GorillaLocomotion
 {
     using UnityEngine;
+    using System.Collections.Generic;
 
     public class Player : MonoBehaviour
     {
@@ -50,6 +51,9 @@
         public bool wasRightHandTouching;
 
         public bool disableMovement = false;
+        public AudioSource audioSource;
+        [Tooltip("Make sure the order is as per enum in HitSoundSetter")]
+        public List<AudioClip> audioClips;
 
         private void Awake()
         {
@@ -73,6 +77,7 @@
             lastHeadPosition = headCollider.transform.position;
             velocityIndex = 0;
             lastPosition = transform.position;
+            if (!audioSource) audioSource = GetComponent<AudioSource>();
         }
 
         private Vector3 CurrentLeftHandPosition()
@@ -294,7 +299,8 @@
             {
                 endPosition = startPosition;
                 return true;
-            } else
+            }
+            else
             {
                 endPosition = Vector3.zero;
                 return false;
@@ -372,5 +378,13 @@
             velocityHistory[velocityIndex] = currentVelocity;
             lastPosition = transform.position;
         }
+
+
+        public void HitObject(int hitSoundId)
+        {
+            if (hitSoundId >= audioClips.Count) return;
+            audioSource.PlayOneShot(audioClips[hitSoundId], 0.1f);
+        }
+
     }
 }
