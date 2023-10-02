@@ -383,7 +383,7 @@
         public void HitObject(int hitSoundId)
         {
             if (hitSoundId >= audioClips.Count) return;
-            audioSource.PlayOneShot(audioClips[hitSoundId], 0.1f);
+            audioSource.PlayOneShot(audioClips[hitSoundId], 0.2f);
         }
 
     }
