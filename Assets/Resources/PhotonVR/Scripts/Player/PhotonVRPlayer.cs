@@ -168,7 +168,7 @@ namespace Photon.VR.Player
                         cos.gameObject.SetActive(true);
             if (cosmetics.Infected == "true" && skinnedMeshRenderer.Count > 0)
                 foreach (SkinnedMeshRenderer cos in skinnedMeshRenderer)
-                    cos.material = infectedMat;
+                    cos.materials[1] = infectedMat;
         }
 
 
