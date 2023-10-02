@@ -22,7 +22,8 @@ namespace Photon.VR.Player
 
 
         [Header("Infection attributes")]
-        public List<SkinnedMeshRenderer> skinnedMeshRenderer;
+        public SkinnedMeshRenderer skinnedMeshRenderer;
+        public Material eyeMat;
         public Material infectedMat;
 
         [Header("Cosmetics Parents")]
@@ -166,9 +167,12 @@ namespace Photon.VR.Player
                         cos.gameObject.SetActive(false);
                     else
                         cos.gameObject.SetActive(true);
-            if (cosmetics.Infected == "true" && skinnedMeshRenderer.Count > 0)
-                foreach (SkinnedMeshRenderer cos in skinnedMeshRenderer)
-                    cos.materials[1] = infectedMat;
+            if (cosmetics.Infected == "true" && skinnedMeshRenderer)
+            {
+                Material[] mats = new Material[] { eyeMat, infectedMat };
+                skinnedMeshRenderer.materials = mats;
+            }
+
         }
 
 
