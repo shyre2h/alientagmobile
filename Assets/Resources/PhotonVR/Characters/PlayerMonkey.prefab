@@ -1383,8 +1383,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  skinnedMeshRenderer:
-  - {fileID: 2555743227012351026}
+  skinnedMeshRenderer: {fileID: 0}
+  eyeMat: {fileID: 0}
   infectedMat: {fileID: 2100000, guid: 862e23f418dde104c988bf76f5730643, type: 2}
   HeadCosmetics: {fileID: 182381451631106285}
   FaceCosmetics: {fileID: 38331861477394824}
