@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour
     {
         instance = this;
         view = GetComponent<PhotonView>();
-        AudioManager.instance.PlayBackGroundTrack(true, 0.3f);
+        AudioManager.instance.PlayBackGroundTrack(true);
 
     }
 
@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
 
     [PunRPC]
     void UpdateNoticeText(string newText)
-    { 
+    {
         CanvasManager.instance.UpdateNoticeText(newText);
     }
 }
