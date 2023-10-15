@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,7 +13,7 @@ public class FingerAnimation : MonoBehaviour
     [SerializeField] string controllerNameLeft, controllerNameRight;
     [SerializeField] string triggerButton;
     [SerializeField] string gripButton;
-
+    [SerializeField] PhotonView photonView;
 
 
 
@@ -20,7 +21,7 @@ public class FingerAnimation : MonoBehaviour
     private void Awake()
     {
         if (!animator) animator = GetComponent<Animator>();
-
+        if (!photonView) photonView = GetComponent<PhotonView>();
         inputActionMapLeft = inputActionReference.FindActionMap(controllerNameLeft);
         inputActionMapRight = inputActionReference.FindActionMap(controllerNameRight);
 
@@ -56,6 +57,8 @@ public class FingerAnimation : MonoBehaviour
 
     private void Update()
     {
+        if (!photonView.IsMine) return;
+
         animator.SetFloat("l_thumb", inputActionTriggerLeft.ReadValue<float>());
         animator.SetFloat("l_fingers", inputActionGripLeft.ReadValue<float>());
         animator.SetFloat("r_thumb", inputActionTriggerRight.ReadValue<float>());

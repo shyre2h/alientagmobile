@@ -15,14 +15,21 @@ public class PlayerDetails : MonoBehaviour
 
 
     // Called either at start or when infected collide with you 
-    public void SetInfection()
+    public void SetInfection(bool value)
     {
         //if (!PhotonNetwork.IsMasterClient) return;
-        view.RPC("SetInfectionRPC", RpcTarget.All);
+        if (value)
+        {
+            view.RPC("SetInfectionRPC", RpcTarget.All);
 
-        //Not using RPC cause SetInfecedCosmetics calls PhotonVRManager which handles RPC
-        GetComponent<SetCosmetics>().SetInfectedCosmetics();
-
+            //Not using RPC cause SetInfecedCosmetics calls PhotonVRManager which handles RPC
+            GetComponent<SetCosmetics>().SetInfectedCosmetics();
+        }
+        else
+        {
+            view.RPC("SetNotInfectionRPC", RpcTarget.All);
+            GetComponent<SetCosmetics>().SetNotInfectedCosmetics();
+        }
     }
 
     [PunRPC]
@@ -34,6 +41,12 @@ public class PlayerDetails : MonoBehaviour
     }
 
 
+
+    [PunRPC]
+    void SetNotInfectionRPC()
+    {
+        isInfected = false;
+    }
 
 
 

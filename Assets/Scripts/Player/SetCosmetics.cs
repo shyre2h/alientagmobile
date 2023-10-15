@@ -14,9 +14,10 @@ public class SetCosmetics : MonoBehaviour
         // PhotonVRManager.SetCosmetic(CosmeticType.Head, "paper-hat1");
 
         // PhotonVRManager.SetCosmetic(CosmeticType.Infected, "true");
-
+        PhotonVRManager.SetColour(Color.green);
         PhotonVRManager.SetCosmetics(new PhotonVRCosmeticsData()
         {
+
             //Head = "paper-hat1",
             // Body = "null",
             Face = "anarchy-chain"
@@ -32,5 +33,8 @@ public class SetCosmetics : MonoBehaviour
         PhotonVRManager.SetCosmetic(CosmeticType.Infected, "true");
     }
 
-
+    public void SetNotInfectedCosmetics()
+    {
+        PhotonVRManager.SetCosmetic(CosmeticType.Infected, "false");
+    }
 }

@@ -24,6 +24,7 @@ namespace Photon.VR.Player
         [Header("Infection attributes")]
         public SkinnedMeshRenderer skinnedMeshRenderer;
         public Material eyeMat;
+        public Material defaultMat;
         public Material infectedMat;
 
         [Header("Cosmetics Parents")]
@@ -167,9 +168,16 @@ namespace Photon.VR.Player
                         cos.gameObject.SetActive(false);
                     else
                         cos.gameObject.SetActive(true);
-            if (cosmetics.Infected == "true" && skinnedMeshRenderer)
+            if (cosmetics.Infected == "true")
             {
                 Material[] mats = new Material[] { eyeMat, infectedMat };
+                skinnedMeshRenderer.materials = mats;
+            }
+            else if (cosmetics.Infected == "false")
+            {
+                defaultMat.color = JsonUtility.FromJson<Color>((string)photonView.Owner.CustomProperties["Colour"]);
+
+                Material[] mats = new Material[] { eyeMat, defaultMat };
                 skinnedMeshRenderer.materials = mats;
             }
 
@@ -187,7 +195,13 @@ namespace Photon.VR.Player
                 //It is masterclient below, since we are temporarily setting the first infected as so
                 if (!PhotonNetwork.IsMasterClient) return;
 
-                GetComponent<PlayerDetails>().SetInfection();
+                GetComponent<PlayerDetails>().SetInfection(true);
+                Debug.Log("Set by CanPlayListener");
+            }
+            else
+            {
+                if (!photonView.IsMine) return;
+                GetComponent<PlayerDetails>().SetInfection(false);
             }
         }
     }

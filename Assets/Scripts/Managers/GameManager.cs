@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
         didGameStart = true;
         // TODO: Set a random player as infected
         // var randomPlayer = PhotonNetwork.PlayerList[UnityEngine.Random.Range(0, PhotonNetwork.CountOfPlayersInRooms)];
-        CanPlayNotifier?.Invoke(true);
+        view.RPC("SetCanPlayNotifier", RpcTarget.All, true);
         view.RPC("UpdateNoticeText", RpcTarget.All, "Game Started");
 
     }
@@ -48,7 +48,24 @@ public class GameManager : MonoBehaviour
     {
         if (++infectionCount >= PhotonNetwork.CurrentRoom.PlayerCount)
         {
+            infectionCount = 0;
             view.RPC("UpdateNoticeText", RpcTarget.All, "Game Over, all infected!");
+
+            StartCoroutine(DoWithDelay(() =>
+            {
+                view.RPC("SetCanPlayNotifier", RpcTarget.All, false);
+                view.RPC("UpdateNoticeText", RpcTarget.All, "Game Starting");
+                // didGameStart = false;
+                // view.RPC("SetCanPlayNotifier", RpcTarget.All, true);
+
+            }, 5f));
+
+
+            // StartCoroutine(DoWithDelay(() =>
+            // {
+            //     view.RPC("SetCanPlayNotifier", RpcTarget.All, true);
+            //     view.RPC("UpdateNoticeText", RpcTarget.All, "Game Started");
+            // }, 15f));
         }
     }
 
@@ -56,5 +73,17 @@ public class GameManager : MonoBehaviour
     void UpdateNoticeText(string newText)
     {
         CanvasManager.instance.UpdateNoticeText(newText);
+    }
+
+    [PunRPC]
+    void SetCanPlayNotifier(bool value)
+    {
+        CanPlayNotifier?.Invoke(value);
+    }
+
+    IEnumerator DoWithDelay(Action action, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        action?.Invoke();
     }
 }

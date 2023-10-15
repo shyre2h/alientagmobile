@@ -5,12 +5,12 @@ using Photon.Pun;
 
 public class CollisionDetection : MonoBehaviour
 {
-    [SerializeField]PlayerDetails playerDetails;
+    [SerializeField] PlayerDetails playerDetails;
     PhotonView view;
 
     private void Start()
     {
-        view= GetComponent<PhotonView>();
+        view = GetComponent<PhotonView>();
         if (!playerDetails)
             playerDetails = GetComponent<PlayerDetails>();
     }
@@ -31,8 +31,7 @@ public class CollisionDetection : MonoBehaviour
 
         //Check if the player grabbing you is infected
         if (!other.GetComponentInParent<PlayerDetails>().isInfected) return;
-        playerDetails.SetInfection();
-
+        playerDetails.SetInfection(true);
 
     }
 }

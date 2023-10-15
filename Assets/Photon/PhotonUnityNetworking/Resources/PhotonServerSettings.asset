@@ -45,6 +45,8 @@ MonoBehaviour:
   - RPCRefreshPlayerValues
   - UpdateNoticeText
   - SetInfectionRPC
+  - SetNotInfectionRPC
+  - SetCanPlayNotifier
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
