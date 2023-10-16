@@ -41,16 +41,16 @@ namespace Photon.VR.Player
         [Header("Colliders")]
         public List<Transform> collidersForDetection;
         public List<Transform> collidersPlayerDetector;
-        bool canPlay = false;
+        // bool canPlay = false;
 
         private void OnEnable()
         {
-            GameManager.CanPlayNotifier += CanPlayListener;
+            GameManager.SetInfectedNotifier += SetInfectedListener;
         }
 
         private void OnDisable()
         {
-            GameManager.CanPlayNotifier -= CanPlayListener;
+            GameManager.SetInfectedNotifier -= SetInfectedListener;
         }
         private void Awake()
         {
@@ -184,24 +184,27 @@ namespace Photon.VR.Player
         }
 
 
-        void CanPlayListener(bool value)
+        void SetInfectedListener(bool value)
         {
-            canPlay = value;
-
-            //Game started
-            if (value)
+            // canPlay = value;
+            if (photonView.IsMine)
             {
-                //TODO: This check should be done for the initial infected player and not masterclient
-                //It is masterclient below, since we are temporarily setting the first infected as so
-                if (!PhotonNetwork.IsMasterClient) return;
 
-                GetComponent<PlayerDetails>().SetInfection(true);
-                Debug.Log("Set by CanPlayListener");
-            }
-            else
-            {
-                if (!photonView.IsMine) return;
-                GetComponent<PlayerDetails>().SetInfection(false);
+                //Game started
+                if (value)
+                {
+                    //TODO: This check should be done for the initial infected player and not masterclient
+                    //It is masterclient below, since we are temporarily setting the first infected as so
+                    if (PhotonNetwork.IsMasterClient)
+                    {
+                        GetComponent<PlayerDetails>().SetInfection(true);
+                        Debug.Log("Set by CanPlayListener");
+                    }
+                }
+                else
+                {
+                    GetComponent<PlayerDetails>().SetInfection(false);
+                }
             }
         }
     }

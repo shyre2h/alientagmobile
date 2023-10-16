@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     PhotonView view;
     //No need to update for clients, only master needs it for the update function
     bool didGameStart = false;
-    public static Action<bool> CanPlayNotifier;
+    public static Action<bool> SetInfectedNotifier;
     int infectionCount;
 
 
@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
         didGameStart = true;
         // TODO: Set a random player as infected
         // var randomPlayer = PhotonNetwork.PlayerList[UnityEngine.Random.Range(0, PhotonNetwork.CountOfPlayersInRooms)];
-        view.RPC("SetCanPlayNotifier", RpcTarget.All, true);
+        view.RPC("SetInfected", RpcTarget.All, true);
         view.RPC("UpdateNoticeText", RpcTarget.All, "Game Started");
 
     }
@@ -53,19 +53,15 @@ public class GameManager : MonoBehaviour
 
             StartCoroutine(DoWithDelay(() =>
             {
-                view.RPC("SetCanPlayNotifier", RpcTarget.All, false);
+                view.RPC("SetInfected", RpcTarget.All, false);
                 view.RPC("UpdateNoticeText", RpcTarget.All, "Game Starting");
-                // didGameStart = false;
-                // view.RPC("SetCanPlayNotifier", RpcTarget.All, true);
-
             }, 5f));
 
+            StartCoroutine(DoWithDelay(() =>
+            {
+                didGameStart = false;
+            }, 10f));
 
-            // StartCoroutine(DoWithDelay(() =>
-            // {
-            //     view.RPC("SetCanPlayNotifier", RpcTarget.All, true);
-            //     view.RPC("UpdateNoticeText", RpcTarget.All, "Game Started");
-            // }, 15f));
         }
     }
 
@@ -76,9 +72,9 @@ public class GameManager : MonoBehaviour
     }
 
     [PunRPC]
-    void SetCanPlayNotifier(bool value)
+    void SetInfected(bool value)
     {
-        CanPlayNotifier?.Invoke(value);
+        SetInfectedNotifier?.Invoke(value);
     }
 
     IEnumerator DoWithDelay(Action action, float delay)
