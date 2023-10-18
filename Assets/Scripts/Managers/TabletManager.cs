@@ -7,6 +7,9 @@ using UnityEngine.UI;
 using static UnityEngine.InputSystem.InputAction;
 using Photon.Voice.Unity;
 using Photon.Voice.Unity.Demos;
+using Keyboard;
+using TMPro;
+using QuantumTek.QuantumUI;
 public class TabletManager : MonoBehaviour
 {
     //Used to show/hids tablet
@@ -20,15 +23,25 @@ public class TabletManager : MonoBehaviour
     public float value;
     public Recorder recorder;
 
+    public KeyboardManager keyboardManager;
+
+
+    [Header("Lobby fields")]
+    public TMP_InputField lobbyName;
+    public Button joinLobby;
+
+
     [Header("Player fields")]
-    public string playerName;
+    public TMP_InputField playerName;
+    public QUI_OptionList colourList;
+
+
     [Header("Game fields")]
     public Slider bgMusicSlider;
     public Slider sfxMusicSlider;
     public Toggle micToggle;
 
-    [Header("lobby fields")]
-    public string lobbyName;
+
 
 
     private void Awake()
