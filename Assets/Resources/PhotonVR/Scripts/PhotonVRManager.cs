@@ -317,6 +317,9 @@ namespace Photon.VR
             Debug.Log($"Joining random with type {hastable["queue"]}");
         }
 
+
+
+
         /// <summary>
         /// Joins a private room
         /// </summary>
@@ -340,12 +343,14 @@ namespace Photon.VR
                 MaxPlayers = (byte)MaxPlayers
             }, null, null);
             Debug.Log($"Joining a private room: {RoomId}");
+            TabletManager.instance.SetCurrentLobbyName(RoomId);
         }
 
         public override void OnJoinedRoom()
         {
             Debug.Log("Joined a room");
             State = ConnectionState.InRoom;
+
         }
 
         public override void OnDisconnected(DisconnectCause cause)
@@ -364,6 +369,8 @@ namespace Photon.VR
             string roomCode = CreateRoomCode();
             Debug.Log($"Joining {roomCode}");
             PhotonNetwork.CreateRoom(roomCode, options, null, null);
+            TabletManager.instance.SetCurrentLobbyName(roomCode);
+
         }
 
         /// <summary>
