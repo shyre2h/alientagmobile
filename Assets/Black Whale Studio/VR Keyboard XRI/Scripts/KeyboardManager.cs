@@ -32,34 +32,35 @@ namespace Keyboard
         [SerializeField] private string switchToLetter = "Letters";
 
         private TextMeshProUGUI switchButtonText;
-        
+
         [Header("Keyboards")]
         [SerializeField] private GameObject lettersKeyboard;
         [SerializeField] private GameObject numbersKeyboard;
         [SerializeField] private GameObject specialCharactersKeyboard;
 
-        [Header("Shift/Caps Lock Button")] 
+        [Header("Shift/Caps Lock Button")]
         [SerializeField] internal bool autoCapsAtStart = true;
         [SerializeField] private Button shiftButton;
         [SerializeField] private Image buttonImage;
         [SerializeField] private Sprite defaultSprite;
         [SerializeField] private Sprite activeSprite;
-        
+
         [Header("Switch Number/Special Button")]
         [SerializeField] private Button switchNumberSpecialButton;
         [SerializeField] private string numbersString = "Numbers";
         [SerializeField] private string specialString = "Special";
 
         private TextMeshProUGUI switchNumSpecButtonText;
-        
+
         [Header("Keyboard Button Colors")]
         [SerializeField] private Color normalColor = Color.black;
         [SerializeField] private Color highlightedColor = Color.yellow;
         [SerializeField] private Color pressedColor = Color.red;
         [SerializeField] private Color selectedColor = Color.blue;
-        
+
         [Header("Output Field Settings")]
         [SerializeField] private TMP_InputField outputField;
+        public TMP_InputField SetOutputField { set { outputField = value; } }
         [SerializeField] private Button enterButton;
         [SerializeField] private int maxCharacters = 15;
         [SerializeField] private int minCharacters = 3;
@@ -73,16 +74,17 @@ namespace Keyboard
         private float lastShiftClickTime;
         private float shiftDoubleClickDelay = 0.5f;
 
+
         public UnityEvent onKeyboardModeChanged;
 
         private void Awake()
         {
             shiftButtonColors = shiftButton.colors;
-            
+
             CheckTextLength();
 
             speechButton.interactable = false;
-            
+
             numbersKeyboard.SetActive(false);
             specialCharactersKeyboard.SetActive(false);
             lettersKeyboard.SetActive(true);
@@ -95,7 +97,7 @@ namespace Keyboard
             switchButtonText = switchButton.GetComponentInChildren<TextMeshProUGUI>();
             switchNumSpecButtonText = switchNumberSpecialButton.GetComponentInChildren<TextMeshProUGUI>();
             keyChannel.RaiseKeyColorsChangedEvent(normalColor, highlightedColor, pressedColor, selectedColor);
-            
+
             switchNumberSpecialButton.gameObject.SetActive(false);
             numbersKeyboard.SetActive(false);
             specialCharactersKeyboard.SetActive(false);
@@ -147,7 +149,7 @@ namespace Keyboard
                 isFirstKeyPress = false;
                 keyChannel.onFirstKeyPress.Invoke();
             }
-    
+
             CheckTextLength();
         }
 
@@ -160,7 +162,7 @@ namespace Keyboard
             outputField.text = outputField.text.Insert(startPos, " ");
 
             outputField.selectionAnchorPosition = outputField.selectionFocusPosition = startPos + 1;
-            
+
             CheckTextLength();
         }
 
@@ -180,7 +182,7 @@ namespace Keyboard
                 outputField.text = outputField.text.Remove(startPos - 1, 1);
                 outputField.selectionAnchorPosition = outputField.selectionFocusPosition = startPos - 1;
             }
-            
+
             CheckTextLength();
         }
 
@@ -197,7 +199,7 @@ namespace Keyboard
 
             // Always enable the delete button, regardless of the text length
             deleteButton.interactable = true;
-            
+
             // Disable shift/caps lock if maximum text length is reached
             if (currentLength != maxCharacters) return;
             DeactivateShift();
@@ -243,21 +245,21 @@ namespace Keyboard
                 shiftActive = false;
             }
             else switch (shiftActive)
-            {
-                case true when !keyHasBeenPressed && Time.time - lastShiftClickTime < shiftDoubleClickDelay:
-                    // If Shift is active, a key has not been pressed, and Shift button was double clicked, activate Caps Lock
-                    capsLockActive = true;
-                    shiftActive = false;
-                    break;
-                case true when !keyHasBeenPressed:
-                    // If Shift is active, a key has not been pressed, deactivate Shift
-                    shiftActive = false;
-                    break;
-                case false:
-                    // If Shift is not active and Shift button was clicked once, activate Shift
-                    shiftActive = true;
-                    break;
-            }
+                {
+                    case true when !keyHasBeenPressed && Time.time - lastShiftClickTime < shiftDoubleClickDelay:
+                        // If Shift is active, a key has not been pressed, and Shift button was double clicked, activate Caps Lock
+                        capsLockActive = true;
+                        shiftActive = false;
+                        break;
+                    case true when !keyHasBeenPressed:
+                        // If Shift is active, a key has not been pressed, deactivate Shift
+                        shiftActive = false;
+                        break;
+                    case false:
+                        // If Shift is not active and Shift button was clicked once, activate Shift
+                        shiftActive = true;
+                        break;
+                }
 
             lastShiftClickTime = Time.time;
             UpdateShiftButtonAppearance();
@@ -309,7 +311,7 @@ namespace Keyboard
                 shiftButtonColors.normalColor = highlightedColor;
                 buttonImage.sprite = activeSprite;
             }
-            else if(shiftActive)
+            else if (shiftActive)
             {
                 shiftButtonColors.normalColor = highlightedColor;
                 buttonImage.sprite = defaultSprite;

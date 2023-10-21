@@ -49,6 +49,8 @@ namespace Photon.VR
         private RoomOptions options;
 
         private ConnectionState State = ConnectionState.Disconnected;
+        string lobbyCode = "";
+
 
         private void Start()
         {
@@ -256,6 +258,13 @@ namespace Photon.VR
 
             if (JoinRoomOnConnect)
                 JoinRandomRoom(DefaultQueue, DefaultRoomLimit);
+            else
+            {
+                if (lobbyCode != "")
+                    JoinPrivateRoom(lobbyCode);
+                else
+                    JoinPrivateRoom(Manager.CreateRoomCode());
+            }
         }
 
         /// <summary>
@@ -317,8 +326,20 @@ namespace Photon.VR
             Debug.Log($"Joining random with type {hastable["queue"]}");
         }
 
+        public static void LeaveCurrentRoomToCreatePrivateRoom()
+        {
+            Manager.lobbyCode = "";
+            Manager.JoinRoomOnConnect = false;
+            PhotonNetwork.LeaveRoom();
+        }
 
 
+        public static void LeaveCurrentRoomToJoinPrivateRoom(string lobbyCode)
+        {
+            Manager.lobbyCode = lobbyCode;
+            Manager.JoinRoomOnConnect = false;
+            PhotonNetwork.LeaveRoom();
+        }
 
         /// <summary>
         /// Joins a private room

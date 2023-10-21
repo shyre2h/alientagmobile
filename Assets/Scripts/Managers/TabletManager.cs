@@ -80,6 +80,8 @@ public class TabletManager : MonoBehaviour
         joinLobby.onClick.AddListener(JoinLobbyButtonPressed);
         setPlayerNameButton.onClick.AddListener(SetName);
         colourList.onChangeOption.AddListener(SetColour);
+        lobbyName.onSelect.AddListener(SetLobbyNameOnSelect);
+        playerName.onSelect.AddListener(SetPlayerNameOnSelect);
     }
 
 
@@ -120,13 +122,20 @@ public class TabletManager : MonoBehaviour
 
     void CreateLobbyButtonPressed()
     {
-        PhotonVRManager.JoinPrivateRoom(PhotonVRManager.Manager.CreateRoomCode());
+        PhotonVRManager.LeaveCurrentRoomToCreatePrivateRoom();
     }
 
+
+    void SetLobbyNameOnSelect(string wut)
+    {
+        Debug.Log(wut);
+        keyboardManager.SetOutputField = lobbyName;
+    }
     void JoinLobbyButtonPressed()
     {
         if (lobbyName.text.Length == 0) return;
-        PhotonVRManager.JoinPrivateRoom(lobbyName.text);
+
+        PhotonVRManager.LeaveCurrentRoomToJoinPrivateRoom(lobbyName.text);
     }
 
 
@@ -136,6 +145,12 @@ public class TabletManager : MonoBehaviour
     }
 
 
+
+    void SetPlayerNameOnSelect(string wut)
+    {
+        Debug.Log(wut);
+        keyboardManager.SetOutputField = playerName;
+    }
     void SetName()
     {
         if (playerName.text.Length == 0) return;
