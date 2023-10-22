@@ -2729,7 +2729,15 @@ MonoBehaviour:
   controllerNameRight: XRI RightHand
   triggerButton: Trigger
   gripButton: Grip
+  aButton: AButton
+  bButton: BButton
+  xButton: XButton
+  yButton: YButton
   photonView: {fileID: 2328097976272880993}
+  a: 0
+  b: 0
+  x: 0
+  y: 0
 --- !u!114 &2328097976272880993
 MonoBehaviour:
   m_ObjectHideFlags: 0
