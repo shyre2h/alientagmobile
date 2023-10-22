@@ -29,6 +29,7 @@ namespace Photon.VR
         public Transform Head;
         public Transform LeftHand;
         public Transform RightHand;
+        public TabletManager tabletManager;
         public Color Colour;
         public PhotonVRCosmeticsData Cosmetics { get; private set; } = new PhotonVRCosmeticsData();
 
@@ -50,7 +51,6 @@ namespace Photon.VR
 
         private ConnectionState State = ConnectionState.Disconnected;
         string lobbyCode = "";
-
 
         private void Start()
         {
@@ -364,7 +364,10 @@ namespace Photon.VR
                 MaxPlayers = (byte)MaxPlayers
             }, null, null);
             Debug.Log($"Joining a private room: {RoomId}");
+            // StartCoroutine(SetLobbyName(RoomId));
             TabletManager.instance.SetCurrentLobbyName(RoomId);
+
+
         }
 
         public override void OnJoinedRoom()
@@ -390,9 +393,20 @@ namespace Photon.VR
             string roomCode = CreateRoomCode();
             Debug.Log($"Joining {roomCode}");
             PhotonNetwork.CreateRoom(roomCode, options, null, null);
+            // StartCoroutine(SetLobbyName(roomCode));
             TabletManager.instance.SetCurrentLobbyName(roomCode);
 
         }
+
+        //Instance is created later
+        // IEnumerator SetLobbyName(string roomCode)
+        // {
+        //     while (!tabletManager)
+        //         yield return null;
+
+        //     tabletManager.SetCurrentLobbyName(roomCode);
+
+        // }
 
         /// <summary>
         /// Generates a random room code

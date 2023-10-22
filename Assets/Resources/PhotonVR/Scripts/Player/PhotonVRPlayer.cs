@@ -24,7 +24,7 @@ namespace Photon.VR.Player
         [Header("Infection attributes")]
         public SkinnedMeshRenderer skinnedMeshRenderer;
         public Material eyeMat;
-        public Material defaultMat;
+        public Material redMat, blueMat, cyanMat, yellowMat, magentaMat, greyMat, greenMat;
         public Material infectedMat;
 
         [Header("Cosmetics Parents")]
@@ -84,6 +84,7 @@ namespace Photon.VR.Player
                     //Enable our body colliders to get detected
                     child.GetComponent<Collider>().enabled = true;
                 }
+                PhotonVRManager.Manager.tabletManager.photonView = photonView;
             }
             else
             {
@@ -125,6 +126,8 @@ namespace Photon.VR.Player
 
         private void _RefreshPlayerValues()
         {
+
+
             // Name
             if (NameText != null)
                 NameText.text = photonView.Owner.NickName;
@@ -161,26 +164,55 @@ namespace Photon.VR.Player
                         cos.gameObject.SetActive(false);
                     else
                         cos.gameObject.SetActive(true);
-            if (cosmetics.Infected == "true")
-            {
-                Material[] mats = new Material[] { eyeMat, infectedMat };
-                skinnedMeshRenderer.materials = mats;
-            }
-            //Most likely redundant, remove?
-            else if (cosmetics.Infected == "false")
-            {
-                defaultMat.color = JsonUtility.FromJson<Color>((string)photonView.Owner.CustomProperties["Colour"]);
-                Debug.LogWarning("default mat:" + defaultMat.color);
-                Material[] mats = new Material[] { eyeMat, defaultMat };
-                skinnedMeshRenderer.materials = mats;
-            }
+
 
 
             //For colour, making sure we are not infected
-            if (cosmetics.Infected != "true")
+
             {
-                defaultMat.color = JsonUtility.FromJson<Color>((string)photonView.Owner.CustomProperties["Colour"]);
-                Material[] mats = new Material[] { eyeMat, defaultMat };
+                // Color newColor = JsonUtility.FromJson<Color>((string)photonView.Owner.CustomProperties["Colour"]);
+                Color newColor = JsonUtility.FromJson<Color>((string)photonView.Owner.CustomProperties["Colour"]);
+                Material selectedMat;
+                Material[] mats;
+
+                // Debug.LogWarning("Refreshed player: " + newColor);
+
+                // switch (newColor)
+                // {
+                //     case "Red": selectedMat = redMat; break;
+                //     case "Blue": selectedMat = blueMat; break;
+                //     case "Cyan": selectedMat = cyanMat; break;
+                //     case "Yellow": selectedMat = yellowMat; break;
+                //     case "Magenta": selectedMat = magentaMat; break;
+                //     case "Grey": selectedMat = greyMat; break;
+                //     //default is green
+                //     default: selectedMat = greenMat; break;
+
+                // }
+
+                if (newColor == Color.red)
+                    selectedMat = redMat;
+                else if (newColor == Color.blue)
+                    selectedMat = blueMat;
+                else if (newColor == Color.cyan)
+                    selectedMat = cyanMat;
+                else if (newColor == Color.yellow)
+                    selectedMat = yellowMat;
+                else if (newColor == Color.magenta)
+                    selectedMat = magentaMat;
+                else if (newColor == Color.grey)
+                    selectedMat = greyMat;
+                else
+                    selectedMat = greenMat;
+
+
+                if (cosmetics.Infected == "true")
+                    mats = new Material[] { eyeMat, infectedMat };
+                else
+                    mats = new Material[] { eyeMat, selectedMat };
+
+
+
                 skinnedMeshRenderer.materials = mats;
             }
 
@@ -199,10 +231,8 @@ namespace Photon.VR.Player
                     //TODO: This check should be done for the initial infected player and not masterclient
                     //It is masterclient below, since we are temporarily setting the first infected as so
                     if (PhotonNetwork.IsMasterClient)
-                    {
                         GetComponent<PlayerDetails>().SetInfection(true);
-                        Debug.Log("Set by CanPlayListener");
-                    }
+
                 }
                 else
                 {

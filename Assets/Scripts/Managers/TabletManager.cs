@@ -12,6 +12,9 @@ using TMPro;
 using QuantumTek.QuantumUI;
 using Photon.VR;
 using System.Linq;
+using Photon.Pun;
+using DG.Tweening;
+
 public class TabletManager : MonoBehaviour
 {
     //Used to show/hids tablet
@@ -24,7 +27,7 @@ public class TabletManager : MonoBehaviour
     InputAction inputActionPrimaryButton;
     public float value;
     public Recorder recorder;
-
+    public PhotonView photonView;
     public KeyboardManager keyboardManager;
 
 
@@ -46,7 +49,7 @@ public class TabletManager : MonoBehaviour
     public Toggle micToggle;
 
 
-
+    Vector3 targetScale;
 
     private void Awake()
     {
@@ -57,6 +60,7 @@ public class TabletManager : MonoBehaviour
 
 
         if (!recorder) recorder = FindObjectOfType<Recorder>();
+
         if (PlayerPrefs.GetInt("mic", 1) == 1)
         {
             micToggle.SetValue(true);
@@ -67,7 +71,7 @@ public class TabletManager : MonoBehaviour
             micToggle.SetValue(false);
             recorder.TransmitEnabled = false;
         }
-
+        targetScale = transform.localScale;
         transform.localScale = Vector3.zero;
         isTabletEnabled = false;
         inputActionMap = inputActionReference.FindActionMap(controllerName);
@@ -107,12 +111,14 @@ public class TabletManager : MonoBehaviour
     {
         if (isTabletEnabled)
         {
-            transform.localScale = Vector3.zero;
+            DOTween.Kill(transform);
+            transform.DOScale(Vector3.zero, 0.3f);
             isTabletEnabled = false;
         }
         else
         {
-            transform.localScale = Vector3.one;
+            DOTween.Kill(transform);
+            transform.DOScale(targetScale, 0.3f);
             isTabletEnabled = true;
         }
     }
@@ -122,17 +128,18 @@ public class TabletManager : MonoBehaviour
 
     void CreateLobbyButtonPressed()
     {
+        if (!photonView.IsMine) return;
         Blink.instance.CloseEyes(true, () => PhotonVRManager.LeaveCurrentRoomToCreatePrivateRoom());
     }
 
 
     void SetLobbyNameOnSelect(string wut)
     {
-        Debug.Log(wut);
         keyboardManager.SetOutputField = lobbyName;
     }
     void JoinLobbyButtonPressed()
     {
+        if (!photonView.IsMine) return;
         if (lobbyName.text.Length == 0) return;
 
         Blink.instance.CloseEyes(true, () => PhotonVRManager.LeaveCurrentRoomToJoinPrivateRoom(lobbyName.text));
@@ -154,6 +161,7 @@ public class TabletManager : MonoBehaviour
     }
     void SetName()
     {
+        // if (!photonView.IsMine) return;
         if (playerName.text.Length == 0) return;
         PhotonVRManager.SetUsername(playerName.text);
 
@@ -162,6 +170,11 @@ public class TabletManager : MonoBehaviour
 
     void SetColour()
     {
+
+        if (!photonView.IsMine) return;
+
+
+        // Debug.LogWarning("Set colour: " + photonView.IsMine);
         string colour = colourList.option;
         Color newColour;
 

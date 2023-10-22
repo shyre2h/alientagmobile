@@ -14,7 +14,7 @@ public class SetCosmetics : MonoBehaviour
         // PhotonVRManager.SetCosmetic(CosmeticType.Head, "paper-hat1");
 
         // PhotonVRManager.SetCosmetic(CosmeticType.Infected, "true");
-        PhotonVRManager.SetColour(Color.green);
+        // PhotonVRManager.SetColour(Color.green);
         PhotonVRManager.SetCosmetics(new PhotonVRCosmeticsData()
         {
 
