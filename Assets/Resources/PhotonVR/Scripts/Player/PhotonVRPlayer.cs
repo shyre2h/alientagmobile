@@ -129,13 +129,6 @@ namespace Photon.VR.Player
             if (NameText != null)
                 NameText.text = photonView.Owner.NickName;
 
-            // Colour
-            foreach (MeshRenderer renderer in ColourObjects)
-            {
-                if (renderer != null)
-                    renderer.material.color = JsonUtility.FromJson<Color>((string)photonView.Owner.CustomProperties["Colour"]);
-            }
-
             // Cosmetics - it's a little ugly to look at
             PhotonVRCosmeticsData cosmetics = JsonUtility.FromJson<PhotonVRCosmeticsData>((string)photonView.Owner.CustomProperties["Cosmetics"]);
             if (HeadCosmetics != null)
@@ -173,10 +166,20 @@ namespace Photon.VR.Player
                 Material[] mats = new Material[] { eyeMat, infectedMat };
                 skinnedMeshRenderer.materials = mats;
             }
+            //Most likely redundant, remove?
             else if (cosmetics.Infected == "false")
             {
                 defaultMat.color = JsonUtility.FromJson<Color>((string)photonView.Owner.CustomProperties["Colour"]);
+                Debug.LogWarning("default mat:" + defaultMat.color);
+                Material[] mats = new Material[] { eyeMat, defaultMat };
+                skinnedMeshRenderer.materials = mats;
+            }
 
+
+            //For colour, making sure we are not infected
+            if (cosmetics.Infected != "true")
+            {
+                defaultMat.color = JsonUtility.FromJson<Color>((string)photonView.Owner.CustomProperties["Colour"]);
                 Material[] mats = new Material[] { eyeMat, defaultMat };
                 skinnedMeshRenderer.materials = mats;
             }
