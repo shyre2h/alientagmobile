@@ -122,7 +122,7 @@ public class TabletManager : MonoBehaviour
 
     void CreateLobbyButtonPressed()
     {
-        PhotonVRManager.LeaveCurrentRoomToCreatePrivateRoom();
+        Blink.instance.CloseEyes(true, () => PhotonVRManager.LeaveCurrentRoomToCreatePrivateRoom());
     }
 
 
@@ -135,7 +135,8 @@ public class TabletManager : MonoBehaviour
     {
         if (lobbyName.text.Length == 0) return;
 
-        PhotonVRManager.LeaveCurrentRoomToJoinPrivateRoom(lobbyName.text);
+        Blink.instance.CloseEyes(true, () => PhotonVRManager.LeaveCurrentRoomToJoinPrivateRoom(lobbyName.text));
+
     }
 
 

@@ -22,6 +22,9 @@ namespace Photon.VR.Player
             playerTemp.TryGetComponent<SetCosmetics>(out setCosmetics);
             if (setCosmetics)
                 setCosmetics.SetDefaultCosmetics();
+
+            Blink.instance.CloseEyes(false, null);
+
         }
 
         public override void OnLeftRoom()
