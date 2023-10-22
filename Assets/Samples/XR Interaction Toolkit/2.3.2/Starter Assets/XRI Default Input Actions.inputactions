@@ -621,7 +621,18 @@
                 {
                     "name": "",
                     "id": "10dada72-cdf6-4b3b-8481-96f162a6acda",
-                    "path": "<OculusTouchController>{LeftHand}/menu",
+                    "path": "<OculusTouchController>/menu",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Generic XR Controller",
+                    "action": "ToggleTablet",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b85860cc-6a17-4eb6-99ef-259167493089",
+                    "path": "<XRController>{LeftHand}/start",
                     "interactions": "",
                     "processors": "",
                     "groups": "Generic XR Controller",
