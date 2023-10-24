@@ -5996,6 +5996,10 @@ PrefabInstance:
       value: 9aa3f57f-3507-4819-b92d-d678c0a808a7
       objectReference: {fileID: 0}
     - target: {fileID: 4041120851213007359, guid: 9a96d92a6323f334898658a3f67f13fc, type: 3}
+      propertyPath: Region
+      value: us
+      objectReference: {fileID: 0}
+    - target: {fileID: 4041120851213007359, guid: 9a96d92a6323f334898658a3f67f13fc, type: 3}
       propertyPath: Colour.a
       value: 1
       objectReference: {fileID: 0}
