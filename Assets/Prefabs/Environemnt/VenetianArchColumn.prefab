@@ -12,10 +12,9 @@ GameObject:
   - component: {fileID: 4348251363694440238}
   - component: {fileID: 7105156574002678995}
   - component: {fileID: 5730144935639953960}
-  - component: {fileID: 5944212794280600374}
   m_Layer: 0
   m_Name: pilars
-  m_TagString: Untagged
+  m_TagString: Brick
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -99,19 +98,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 3248490488575378684, guid: 8f1a68129740651488e38fce1f72bcb0, type: 3}
---- !u!114 &5944212794280600374
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3251610725522174209}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2433bb209269fde4da9e3fe2156b125d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  surfaceType: 1
 --- !u!1 &5309966093516669834
 GameObject:
   m_ObjectHideFlags: 0
