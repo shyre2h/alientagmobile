@@ -352,9 +352,18 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "ToggleTablet",
+                    "name": "ToggleTabletOld",
                     "type": "Button",
                     "id": "e7f92485-1742-4934-a8eb-88fa58479f0a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ToggleTablet",
+                    "type": "Button",
+                    "id": "38f09016-e84e-4c34-aa87-e79de495fa10",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -614,7 +623,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Generic XR Controller",
-                    "action": "ToggleTablet",
+                    "action": "ToggleTabletOld",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -625,7 +634,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Generic XR Controller",
-                    "action": "ToggleTablet",
+                    "action": "ToggleTabletOld",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -636,7 +645,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Generic XR Controller",
-                    "action": "ToggleTablet",
+                    "action": "ToggleTabletOld",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -692,6 +701,17 @@
                     "processors": "",
                     "groups": "Generic XR Controller",
                     "action": "XButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "84110610-4ca4-4cba-bdfe-6258b3ec32a1",
+                    "path": "<XRController>{LeftHand}/secondaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Generic XR Controller",
+                    "action": "ToggleTablet",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
