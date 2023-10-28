@@ -207,9 +207,9 @@ namespace Photon.VR.Player
 
 
                 if (cosmetics.Infected == "true")
-                    mats = new Material[] { eyeMat, infectedMat };
+                    mats = new Material[] { infectedMat,eyeMat };
                 else
-                    mats = new Material[] { eyeMat, selectedMat };
+                    mats = new Material[] { selectedMat,eyeMat };
 
 
 
