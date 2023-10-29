@@ -93,10 +93,11 @@ public class FingerAnimation : MonoBehaviour
         animator.SetFloat("r_ring", inputActionA.ReadValue<float>());
 
 
-        a = inputActionA.ReadValue<float>();
-        x = inputActionX.ReadValue<float>();
-        b = inputActionB.ReadValue<float>();
-        y = inputActionY.ReadValue<float>();
+        //Testing
+        // a = inputActionA.ReadValue<float>();
+        // x = inputActionX.ReadValue<float>();
+        // b = inputActionB.ReadValue<float>();
+        // y = inputActionY.ReadValue<float>();
     }
 
 
