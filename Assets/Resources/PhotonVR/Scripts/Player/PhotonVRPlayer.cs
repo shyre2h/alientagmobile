@@ -207,9 +207,9 @@ namespace Photon.VR.Player
 
 
                 if (cosmetics.Infected == "true")
-                    mats = new Material[] { infectedMat,eyeMat };
+                    mats = new Material[] { infectedMat, eyeMat };
                 else
-                    mats = new Material[] { selectedMat,eyeMat };
+                    mats = new Material[] { selectedMat, eyeMat };
 
 
 
@@ -217,7 +217,6 @@ namespace Photon.VR.Player
             }
 
         }
-
 
         void SetInfectedListener(bool value)
         {
@@ -230,7 +229,10 @@ namespace Photon.VR.Player
                 {
                     //TODO: This check should be done for the initial infected player and not masterclient
                     //It is masterclient below, since we are temporarily setting the first infected as so
-                    if (PhotonNetwork.IsMasterClient)
+                    // if (PhotonNetwork.IsMasterClient)
+                    //     GetComponent<PlayerDetails>().SetInfection(true);
+
+                    if (GameManager.instance.infectedActorNumber == photonView.Owner.ActorNumber)
                         GetComponent<PlayerDetails>().SetInfection(true);
 
                 }

@@ -12,8 +12,8 @@ public class GameManager : MonoBehaviour
     //No need to update for clients, only master needs it for the update function
     bool didGameStart = false;
     public static Action<bool> SetInfectedNotifier;
+    public int infectedActorNumber { private set; get; }
     int infectionCount;
-
 
     void Start()
     {
@@ -25,20 +25,33 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (!PhotonNetwork.IsMasterClient || PhotonNetwork.CurrentRoom.PlayerCount < 2) return;
+
+        if (!PhotonNetwork.IsMasterClient) return;
+        if (PhotonNetwork.CurrentRoom.PlayerCount < 2) return;
         if (!didGameStart)
             StartGame();
 
 
     }
+    // void OnPhotonPlayerConnected()
+    // {
+    //     if (!playerList.Contains(PhotonNetwork.playerName))
+    //     {
+    //         playerList.Add(PhotonNetwork.playerName);
+    //     }
+    // }
 
 
     void StartGame()
     {
         didGameStart = true;
-        // TODO: Set a random player as infected
-        // var randomPlayer = PhotonNetwork.PlayerList[UnityEngine.Random.Range(0, PhotonNetwork.CountOfPlayersInRooms)];
-        view.RPC("SetInfected", RpcTarget.All, true);
+
+        Player[] players = PhotonNetwork.PlayerList;
+        // Get a random player from the list
+        Player randomPlayer = players[UnityEngine.Random.Range(0, players.Length)];
+        infectedActorNumber = randomPlayer.ActorNumber;
+
+        view.RPC("SetInfected", RpcTarget.All, true, infectedActorNumber);
         view.RPC("UpdateNoticeText", RpcTarget.All, "Game Started");
 
     }
@@ -53,7 +66,7 @@ public class GameManager : MonoBehaviour
 
             StartCoroutine(DoWithDelay(() =>
             {
-                view.RPC("SetInfected", RpcTarget.All, false);
+                view.RPC("SetInfected", RpcTarget.All, false, -1);
                 view.RPC("UpdateNoticeText", RpcTarget.All, "Game Starting");
             }, 5f));
 
@@ -72,8 +85,9 @@ public class GameManager : MonoBehaviour
     }
 
     [PunRPC]
-    void SetInfected(bool value)
+    void SetInfected(bool value, int infectedActorNumber)
     {
+        this.infectedActorNumber = infectedActorNumber;
         SetInfectedNotifier?.Invoke(value);
     }
 
