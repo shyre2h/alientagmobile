@@ -8,24 +8,24 @@ public class SoundHandler : MonoBehaviour
 {
 
     [SerializeField] Player playerScript;
-    bool playSound = false;
+    bool canPlaySound = false;
 
     private void OnEnable()
     {
-        Blink.BlinkNotifier += BlinkListener;
+        Blink.instance.BlinkNotifier += BlinkListener;
     }
 
 
     private void OnDisable()
     {
-        Blink.BlinkNotifier -= BlinkListener;
+        Blink.instance.BlinkNotifier -= BlinkListener;
     }
 
 
 
     void BlinkListener(bool value)
     {
-        playSound = value;
+        canPlaySound = !value;
     }
 
 
@@ -33,7 +33,7 @@ public class SoundHandler : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!playSound) return;
+        if (!canPlaySound) return;
 
         if (other.tag == "Rock")
             playerScript.HitObject(0);

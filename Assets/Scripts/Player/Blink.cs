@@ -14,7 +14,7 @@ public class Blink : MonoBehaviour
     float blinkTime2 = 0.5f;
     bool performingBlink = false;
     public static Blink instance;
-    public static Action<bool> BlinkNotifier;
+    public Action<bool> BlinkNotifier;
 
     private void Awake()
     {
