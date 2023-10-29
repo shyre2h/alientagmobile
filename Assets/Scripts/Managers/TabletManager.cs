@@ -36,6 +36,8 @@ public class TabletManager : MonoBehaviour
     public TMP_InputField lobbyName;
     public Button createLobby;
     public Button joinLobby;
+    public Button joinPublicLobby;
+    public Button leaveLobby;
     public TextMeshProUGUI currentLobby;
     public QUI_OptionList turnStyleList;
 
@@ -85,6 +87,9 @@ public class TabletManager : MonoBehaviour
         micToggle.onValueChanged.AddListener(MicToggled);
         createLobby.onClick.AddListener(CreateLobbyButtonPressed);
         joinLobby.onClick.AddListener(JoinLobbyButtonPressed);
+        joinPublicLobby.onClick.AddListener(JoinPublicLobbyButtonPressed);
+        leaveLobby.onClick.AddListener(CreateLobbyButtonPressed);
+
         setPlayerNameButton.onClick.AddListener(SetName);
         colourList.onChangeOption.AddListener(SetColour);
         turnStyleList.onChangeOption.AddListener(SetTurnStyle);
@@ -150,6 +155,14 @@ public class TabletManager : MonoBehaviour
 
     }
 
+
+    void JoinPublicLobbyButtonPressed()
+    {
+        if (!photonView.IsMine) return;
+
+        Blink.instance.CloseEyes(true, () => PhotonVRManager.LeaveCurrentRoomToJoinPublicRoom());
+
+    }
 
     public void SetCurrentLobbyName(string newLobbyName)
     {

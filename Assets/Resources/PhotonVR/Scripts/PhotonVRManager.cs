@@ -341,6 +341,14 @@ namespace Photon.VR
             PhotonNetwork.LeaveRoom();
         }
 
+        public static void LeaveCurrentRoomToJoinPublicRoom()
+        {
+            Manager.JoinRoomOnConnect = true;
+            PhotonNetwork.LeaveRoom();
+        }
+
+
+
         /// <summary>
         /// Joins a private room
         /// </summary>
