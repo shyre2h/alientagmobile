@@ -29,6 +29,7 @@ public class TabletManager : MonoBehaviour
     public Recorder recorder;
     public PhotonView photonView;
     public KeyboardManager keyboardManager;
+    public List<GameObject> turnStyles;
 
 
     [Header("Lobby fields")]
@@ -36,6 +37,8 @@ public class TabletManager : MonoBehaviour
     public Button createLobby;
     public Button joinLobby;
     public TextMeshProUGUI currentLobby;
+    public QUI_OptionList turnStyleList;
+
 
     [Header("Player fields")]
     public TMP_InputField playerName;
@@ -84,6 +87,7 @@ public class TabletManager : MonoBehaviour
         joinLobby.onClick.AddListener(JoinLobbyButtonPressed);
         setPlayerNameButton.onClick.AddListener(SetName);
         colourList.onChangeOption.AddListener(SetColour);
+        turnStyleList.onChangeOption.AddListener(SetTurnStyle);
         lobbyName.onSelect.AddListener(SetLobbyNameOnSelect);
         playerName.onSelect.AddListener(SetPlayerNameOnSelect);
     }
@@ -191,6 +195,35 @@ public class TabletManager : MonoBehaviour
 
         PhotonVRManager.SetColour(newColour);
     }
+
+
+    void SetTurnStyle()
+    {
+
+        string turnStyleText = turnStyleList.option;
+        int selectedIndex = 0;
+        switch (turnStyleText)
+        {
+            case "None": selectedIndex = 0; break;
+            case "Smooth": selectedIndex = 1; break;
+            case "Snap": selectedIndex = 2; break;
+            default: selectedIndex = 0; break;
+        }
+
+        if (selectedIndex >= turnStyles.Count) return;
+
+        for (int i = 0; i < turnStyles.Count; i++)
+        {
+            if (i == selectedIndex)
+                turnStyles[i].SetActive(true);
+            else
+                turnStyles[i].SetActive(false);
+
+        }
+
+
+    }
+
 
 
     void BGMusicVolume(float volume)
