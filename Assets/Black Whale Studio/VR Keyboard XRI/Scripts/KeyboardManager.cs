@@ -133,7 +133,7 @@ namespace Keyboard
             }
             else
             {
-                textToInsert = key.ToLower();
+                textToInsert = key.ToUpper();
             }
 
             int startPos = Mathf.Min(outputField.selectionAnchorPosition, outputField.selectionFocusPosition);
