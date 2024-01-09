@@ -1,0 +1,47 @@
+ManifestFileVersion: 0
+UnityVersion: 2023.2.1f1
+CRC: 3548560455
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 925f129756998e84d0ef88d43867239c
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: fe5aaa4ea8d3a02507b32c28dedac636
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: b2a910392d7bea389f4dea936adb77a3
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: e9ac84d65aaa11a41b93fcd0b32258b1, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 134
+  Script: {instanceID: 0}
+- Class: 137
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: Assembly-CSharp
+  ClassName: .PrefabLightmapData/RendererInfo
+Assets:
+- Assets/Maps/map.prefab
+Dependencies: []

@@ -26,11 +26,9 @@ public class CollisionDetection : MonoBehaviour
         //Check if we're already infected
         if (playerDetails.isInfected) return;
 
-        //Check if you collided with hands
-        if (other.gameObject.layer != LayerMask.NameToLayer("PlayerDetector")) return;
-
         //Check if the player grabbing you is infected
         if (!other.GetComponentInParent<PlayerDetails>().isInfected) return;
+
         playerDetails.SetInfection(true);
 
     }

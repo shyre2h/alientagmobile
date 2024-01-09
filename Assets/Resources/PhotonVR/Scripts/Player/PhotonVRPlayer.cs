@@ -10,13 +10,14 @@ using Photon.VR.Cosmetics;
 
 namespace Photon.VR.Player
 {
-    public class PhotonVRPlayer : MonoBehaviourPun
+    public class PhotonVRPlayer : MonoBehaviourPun, IPunObservable
     {
         [Header("Objects")]
         public Transform Head;
         public Transform Body;
         public Transform LeftHand;
         public Transform RightHand;
+        public Rigidbody Rigidbody;
         [Tooltip("The objects that will get the colour of the player applied to them")]
         public List<MeshRenderer> ColourObjects;
 
@@ -38,10 +39,16 @@ namespace Photon.VR.Player
         public TextMeshPro NameText;
         public bool HideLocalPlayer = true;
 
-        [Header("Colliders")]
-        public List<Transform> collidersForDetection;
-        public List<Transform> collidersPlayerDetector;
         // bool canPlay = false;
+        //private Vector3 TargetPosition;
+        //private Quaternion TargetRotation;
+        public Vector3 realVel = Vector3.zero;
+        public Quaternion realRotation = Quaternion.identity;
+        public Vector3 realPosition = Vector3.zero;
+        public double currentTime = 0.0;
+        public double currentPacketTime = 0.0;
+        public double lastPacketTime = 0.0;
+        public double timeToReachGoal = 0.0;
 
         private void OnEnable()
         {
@@ -78,25 +85,7 @@ namespace Photon.VR.Player
         {
             if (photonView.IsMine)
             {
-                foreach (Transform child in collidersForDetection)
-                {
-
-                    //Enable our body colliders to get detected
-                    child.GetComponent<Collider>().enabled = true;
-                }
                 PhotonVRManager.Manager.tabletManager.photonView = photonView;
-            }
-            else
-            {
-                foreach (Transform child in collidersPlayerDetector)
-                {
-
-                    //Enable others hand colliders to detect us
-                    child.GetComponent<Collider>().enabled = true;
-
-                    //Set the layer of our body part to default so we don't get detected by ourselves
-                    // child.gameObject.layer = LayerMask.NameToLayer("Default");
-                }
             }
         }
 
@@ -109,10 +98,82 @@ namespace Photon.VR.Player
                 Head.transform.rotation = PhotonVRManager.Manager.Head.transform.rotation;
 
                 RightHand.transform.position = PhotonVRManager.Manager.RightHand.transform.position;
-                RightHand.transform.rotation = PhotonVRManager.Manager.RightHand.transform.rotation;
-
                 LeftHand.transform.position = PhotonVRManager.Manager.LeftHand.transform.position;
+
+                /*
+                if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+                {
+                    Quaternion fixRotationRight = new Quaternion(PhotonVRManager.Manager.RightHand.transform.rotation.x + 0.2f,
+                        PhotonVRManager.Manager.RightHand.transform.rotation.y,
+                        PhotonVRManager.Manager.RightHand.transform.rotation.z,
+                        PhotonVRManager.Manager.RightHand.transform.rotation.w);
+
+                    Quaternion fixRotationLeft = new Quaternion(PhotonVRManager.Manager.LeftHand.transform.rotation.x + 0.2f,
+                        PhotonVRManager.Manager.LeftHand.transform.rotation.y,
+                        PhotonVRManager.Manager.LeftHand.transform.rotation.z,
+                        PhotonVRManager.Manager.LeftHand.transform.rotation.w);
+
+                    RightHand.transform.rotation = fixRotationRight;
+                    LeftHand.transform.rotation = fixRotationLeft;
+                }
+                else
+                {
+                    RightHand.transform.rotation = PhotonVRManager.Manager.RightHand.transform.rotation;
+                    LeftHand.transform.rotation = PhotonVRManager.Manager.LeftHand.transform.rotation;
+                }
+                */
+
+                RightHand.transform.rotation = PhotonVRManager.Manager.RightHand.transform.rotation;
                 LeftHand.transform.rotation = PhotonVRManager.Manager.LeftHand.transform.rotation;
+            }
+            else
+            {
+                float distance = Vector3.Distance(transform.position, realPosition);
+                float angle = Quaternion.Angle(transform.rotation, realRotation);
+
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, realRotation, angle * Time.deltaTime * PhotonNetwork.SerializationRate);
+                if (distance > 3)
+                {
+                    transform.position = realPosition;
+                }
+                else if (distance < 0.03)
+                {
+                    transform.position = Vector3.MoveTowards(transform.position, realPosition, 0.1f);
+                }
+                else
+                {
+                    transform.position = Vector3.MoveTowards(transform.position, realPosition, distance * Time.deltaTime * (PhotonNetwork.SerializationRate / 2));
+                }
+            }
+        }
+
+
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                stream.SendNext(transform.position);
+                stream.SendNext(transform.rotation);
+                stream.SendNext(PhotonVRManager.Manager.Rigidbody.velocity);
+            }
+            else
+            {
+                realPosition = (Vector3)stream.ReceiveNext();
+                realRotation = (Quaternion)stream.ReceiveNext();
+                realVel = (Vector3)stream.ReceiveNext();
+
+                float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTime));
+
+                Vector3 direction = Vector3.zero;
+                if (Mathf.Abs(realVel.y) > 0.1f)
+                {
+                    direction = realVel;
+                }
+                else
+                {
+                    direction = new Vector3(realVel.x, 0, realVel.z);
+                }
+                realPosition += (direction * lag);
             }
         }
 

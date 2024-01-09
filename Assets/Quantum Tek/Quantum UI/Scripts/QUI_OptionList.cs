@@ -40,6 +40,11 @@ namespace QuantumTek.QuantumUI
             optionText.text = option;
         }
 
+        public string GetOption()
+        {
+            return option;
+        }
+
         /// <summary>
         /// Increments/decrements the current option by the given amount.
         /// </summary>

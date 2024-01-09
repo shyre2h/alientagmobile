@@ -29,7 +29,9 @@ namespace Photon.VR
         public Transform Head;
         public Transform LeftHand;
         public Transform RightHand;
+        public Rigidbody Rigidbody;
         public TabletManager tabletManager;
+        public MapController mapController;
         public Color Colour;
         public PhotonVRCosmeticsData Cosmetics { get; private set; } = new PhotonVRCosmeticsData();
 
@@ -51,6 +53,7 @@ namespace Photon.VR
 
         private ConnectionState State = ConnectionState.Disconnected;
         string lobbyCode = "";
+        string map = "Default";
 
         private void Start()
         {
@@ -313,37 +316,47 @@ namespace Photon.VR
             ExitGames.Client.Photon.Hashtable hastable = new ExitGames.Client.Photon.Hashtable();
             hastable.Add("queue", Queue);
             hastable.Add("version", Application.version);
+            hastable.Add("map", Manager.map);
 
             RoomOptions roomOptions = new RoomOptions();
             roomOptions.MaxPlayers = (byte)MaxPlayers;
             roomOptions.IsVisible = true;
             roomOptions.IsOpen = true;
             roomOptions.CustomRoomProperties = hastable;
-            roomOptions.CustomRoomPropertiesForLobby = new string[] { "queue", "version" };
+            roomOptions.CustomRoomPropertiesForLobby = new string[] { "queue", "version", "map" };
             Manager.options = roomOptions;
 
             PhotonNetwork.JoinRandomRoom(hastable, (byte)roomOptions.MaxPlayers, MatchmakingMode.RandomMatching, null, null, null);
             Debug.Log($"Joining random with type {hastable["queue"]}");
         }
 
-        public static void LeaveCurrentRoomToCreatePrivateRoom()
+        public static void LeaveCurrentRoomToCreatePrivateRoom(string mapId, string mapDirectory)
         {
+            Manager.mapController.LoadAssetBundleMap(mapDirectory);
+
             Manager.lobbyCode = "";
+            Manager.map = mapId;
             Manager.JoinRoomOnConnect = false;
             PhotonNetwork.LeaveRoom();
         }
 
 
-        public static void LeaveCurrentRoomToJoinPrivateRoom(string lobbyCode)
+        public static void LeaveCurrentRoomToJoinPrivateRoom(string lobbyCode, string mapId, string mapDirectory)
         {
+            Manager.mapController.LoadAssetBundleMap(mapDirectory);
+
             Manager.lobbyCode = lobbyCode;
+            Manager.map = mapId;
             Manager.JoinRoomOnConnect = false;
             PhotonNetwork.LeaveRoom();
         }
 
-        public static void LeaveCurrentRoomToJoinPublicRoom()
+        public static void LeaveCurrentRoomToJoinPublicRoom(string mapId, string mapDirectory)
         {
+            Manager.mapController.LoadAssetBundleMap(mapDirectory);
+
             Manager.JoinRoomOnConnect = true;
+            Manager.map = mapId;
             PhotonNetwork.LeaveRoom();
         }
 
@@ -365,12 +378,17 @@ namespace Photon.VR
 
         public static void _JoinPrivateRoom(string RoomId, int MaxPlayers)
         {
+            ExitGames.Client.Photon.Hashtable hastable = new ExitGames.Client.Photon.Hashtable();
+            hastable.Add("map", Manager.map);
+
             PhotonNetwork.JoinOrCreateRoom(RoomId, new RoomOptions()
             {
                 IsVisible = false,
                 IsOpen = true,
-                MaxPlayers = (byte)MaxPlayers
-            }, null, null);
+                MaxPlayers = (byte)MaxPlayers,
+                CustomRoomProperties = hastable,
+                CustomRoomPropertiesForLobby = new string[] { "map" }
+        }, null, null);
             Debug.Log($"Joining a private room: {RoomId}");
             // StartCoroutine(SetLobbyName(RoomId));
             TabletManager.instance.SetCurrentLobbyName(RoomId);
@@ -383,6 +401,8 @@ namespace Photon.VR
             Debug.Log("Joined a room");
             State = ConnectionState.InRoom;
 
+            Rigidbody.velocity = Vector3.zero;
+            Rigidbody.transform.localPosition = new Vector3(0, -1.5f, 0);
         }
 
         public override void OnDisconnected(DisconnectCause cause)
@@ -403,6 +423,9 @@ namespace Photon.VR
             PhotonNetwork.CreateRoom(roomCode, options, null, null);
             // StartCoroutine(SetLobbyName(roomCode));
             TabletManager.instance.SetCurrentLobbyName(roomCode);
+
+            Rigidbody.velocity = Vector3.zero;
+            Rigidbody.transform.localPosition = new Vector3(0, -1.5f, 0);
 
         }
 

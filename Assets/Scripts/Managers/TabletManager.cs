@@ -14,6 +14,9 @@ using Photon.VR;
 using System.Linq;
 using Photon.Pun;
 using DG.Tweening;
+using ModIO;
+using ModIOBrowser.Implementation;
+using ModIO.Util;
 
 public class TabletManager : MonoBehaviour
 {
@@ -30,6 +33,8 @@ public class TabletManager : MonoBehaviour
     public PhotonView photonView;
     public KeyboardManager keyboardManager;
     public List<GameObject> turnStyles;
+    public CanvasGroup tabsCanvas;
+    public CanvasGroup modioCanvas;
 
 
     [Header("Lobby fields")]
@@ -47,11 +52,53 @@ public class TabletManager : MonoBehaviour
     public Button setPlayerNameButton;
     public QUI_OptionList colourList;
 
+    [Header("Mod fields")]
+    public Button downloadMods;
+    public QUI_OptionList mapsList;
 
     [Header("Game fields")]
     public Slider bgMusicSlider;
     public Slider sfxMusicSlider;
     public Toggle micToggle;
+
+    [Header("Mod overall")]
+    public static SubscribedMod[] subscribedMods = Array.Empty<SubscribedMod>();
+    public List<string> availableMaps = new List<string>();
+
+    [Header("Auth panel")]
+    public GameObject authPanel;
+    public Button authBackButton;
+    public TMP_InputField emailInputField;
+    public Button emailSendCodeButton;
+
+    [Header("Code panel")]
+    public GameObject codePanel;
+    public Button codeBackButton;
+    public TextMeshProUGUI codeText;
+    public TMP_InputField codeInputField;
+    public Button submitCodeButton;
+
+    [Header("Home panel")]
+    public GameObject homePanel;
+    public Button homeBackButton;
+    public Button leftArrow;
+    public Button rightArrow;
+    public List<MapObject> mapObjects;
+
+    [Header("Mod panel")]
+    public GameObject modPanel;
+    public Button modBackButton;
+    public MapObject mapObject;
+    public TextMeshProUGUI authorText;
+    public TextMeshProUGUI sizeText;
+    public TextMeshProUGUI subscribersText;
+    public Button subscribeButton;
+    public TextMeshProUGUI subscribeButtonText;
+
+    [Header("Error panel")]
+    public GameObject errorPanel;
+    public Button errorBackButton;
+    public TextMeshProUGUI errorText;
 
 
     Vector3 targetScale;
@@ -90,11 +137,20 @@ public class TabletManager : MonoBehaviour
         joinPublicLobby.onClick.AddListener(JoinPublicLobbyButtonPressed);
         leaveLobby.onClick.AddListener(CreateLobbyButtonPressed);
 
+        downloadMods.onClick.AddListener(DownloadMods);
+
         setPlayerNameButton.onClick.AddListener(SetName);
         colourList.onChangeOption.AddListener(SetColour);
         turnStyleList.onChangeOption.AddListener(SetTurnStyle);
         lobbyName.onSelect.AddListener(SetLobbyNameOnSelect);
         playerName.onSelect.AddListener(SetPlayerNameOnSelect);
+
+        authBackButton.onClick.AddListener(AuthBackButton);
+        emailInputField.onSelect.AddListener((string txt) => { SetInputFieldOnSelect(emailInputField); });
+        emailSendCodeButton.onClick.AddListener(SendEmailCode);
+
+        codeInputField.onSelect.AddListener((string txt) => { SetInputFieldOnSelect(codeInputField); });
+        submitCodeButton.onClick.AddListener(SubmitEmailCode);
     }
 
 
@@ -114,6 +170,24 @@ public class TabletManager : MonoBehaviour
     {
         bgMusicSlider.value = AudioManager.instance.bgVolume;
         sfxMusicSlider.value = AudioManager.instance.sfxVolume;
+
+        Initialize();
+    }
+
+    static async void Initialize()
+    {
+        // wait and check if we're authenticated, we need to know if our access token is still valid
+        var isAuthed = await ModIOUnityAsync.IsAuthenticated();
+        if (isAuthed.Succeeded())
+        {
+            Authentication.Instance.IsAuthenticated = true;
+            ModIOUnity.EnableModManagement(ModManagementDelegate);
+            ModIOUnity.FetchUpdates((Result r) => { CacheLocalSubscribedModStatuses(); instance.GetAllAvailableMaps(); });
+        }
+        else
+        {
+            Authentication.Instance.IsAuthenticated = false;
+        }
     }
 
     public void ToggleTablet(CallbackContext context)
@@ -132,13 +206,342 @@ public class TabletManager : MonoBehaviour
         }
     }
 
+    void AuthBackButton()
+    {
+        tabsCanvas.interactable = true;
+        tabsCanvas.blocksRaycasts = true;
+        tabsCanvas.alpha = 1f;
+        modioCanvas.interactable = false;
+        modioCanvas.blocksRaycasts = false;
+        modioCanvas.alpha = 0f;
+
+        authPanel.SetActive(false);
+    }
+
+    void DownloadMods()
+    {
+        //ModIOBrowser.Browser.Open(null);
+        tabsCanvas.interactable = false;
+        tabsCanvas.blocksRaycasts = false;
+        tabsCanvas.alpha = 0f;
+        modioCanvas.interactable = true;
+        modioCanvas.blocksRaycasts = true;
+        modioCanvas.alpha = 1f;
+
+        if (!Authentication.Instance.IsAuthenticated)
+        {
+            authPanel.SetActive(true);
+        }
+        else
+        {
+            ShowHomePanel();
+        }
+    }
+
+    void SetInputFieldOnSelect(TMP_InputField inpField)
+    {
+        keyboardManager.SetOutputField = inpField;
+    }
+    void SendEmailCode()
+    {
+        // if (!photonView.IsMine) return;
+        if (emailInputField.text.Length == 0) return;
+
+        ModIOUnity.RequestAuthenticationEmail(emailInputField.text, EmailSent);
+        authPanel.SetActive(false);
+    }
+
+    void EmailSent(Result result)
+    {
+        if (result.Succeeded())
+        {
+            ShowCodePanel(emailInputField.text);
+        }
+        else
+        {
+            if (result.IsInvalidEmailAddress())
+            {
+                ShowErrorPanel("Invalid email address", authPanel);
+            }
+            else
+            {
+                ShowErrorPanel("Something went wrong", authPanel);
+            }
+        }
+    }
+
+    void ShowCodePanel(string email)
+    {
+        codePanel.SetActive(true);
+
+        codeInputField.text = "";
+
+        codeText.text = "Please check your email <b>" + email + "</b> for your 5 digit code to verify it below.";
+
+        codeBackButton.onClick.RemoveAllListeners();
+        codeBackButton.onClick.AddListener(() =>
+        {
+            authPanel.SetActive(true);
+            codePanel.SetActive(false);
+        });
+    }
+
+    void SubmitEmailCode()
+    {
+        if (codeInputField.text.Length == 0) return;
+        print(codeInputField.text);
+
+        ModIOUnity.SubmitEmailSecurityCode(codeInputField.text.ToUpper(), CodeSubmitted);
+        codePanel.SetActive(false);
+    }
+
+    void CodeSubmitted(Result result)
+    {
+        if (result.Succeeded())
+        {
+            Authentication.Instance.IsAuthenticated = true;
+            ModIOUnity.EnableModManagement(ModManagementDelegate);
+            ModIOUnity.FetchUpdates((Result r) => { CacheLocalSubscribedModStatuses(); });
+            ShowHomePanel();
+        }
+        else
+        {
+            if (result.IsInvalidSecurityCode())
+            {
+                ShowErrorPanel("Invalid code", codePanel);
+            }
+            else
+            {
+                ShowErrorPanel("Something went wrong", codePanel);
+            }
+        }
+    }
+
+    static void ModManagementDelegate(ModManagementEventType eventType, ModId modId, Result result)
+    {
+        if(eventType.Equals(ModManagementEventType.Installed) || eventType.Equals(ModManagementEventType.Uninstalled))
+        {
+           instance.GetAllAvailableMaps();
+        }
+
+        Debug.Log("a mod management event of type " + eventType.ToString() + " has been invoked");
+    }
+
+    void ShowHomePanel(bool updateMods = true)
+    {
+        homePanel.SetActive(true);
+
+        homeBackButton.onClick.RemoveAllListeners();
+        homeBackButton.onClick.AddListener(() =>
+        {
+            homePanel.SetActive(false);
+            AuthBackButton();
+        });
+
+        if (updateMods)
+        {
+            SearchFilter filter = new SearchFilter();
+            filter = new SearchFilter();
+            filter.SetPageIndex(0);
+            filter.SetPageSize(100);
+            filter.SortBy(SortModsBy.Popular);
+            filter.SetToAscending(false);
+
+            ModIOUnity.GetMods(filter, GetModsResponse);
+        }
+    }
+
+    void GetModsResponse(ResultAnd<ModPage> response)
+    {
+
+        ModProfile[] modProfiles = response.value.modProfiles;
 
 
+        if (response.result.Succeeded())
+        {
+            ShowModdedMaps(0, modProfiles);
+        }
+        else
+        {
+            ShowErrorPanel("Couldn't get mods", homePanel);
+        }
+    }
+
+    void ShowModdedMaps(int startingIndex, ModProfile[] modProfiles)
+    {
+        leftArrow.onClick.RemoveAllListeners();
+        rightArrow.onClick.RemoveAllListeners();
+        if (startingIndex > 0)
+        {
+            leftArrow.onClick.AddListener(() => { ShowModdedMaps(startingIndex - 3, modProfiles); });
+        }
+        if (modProfiles.Length > startingIndex + 3)
+        {
+            rightArrow.onClick.AddListener(() => { ShowModdedMaps(startingIndex + 3, modProfiles); });
+        }
+
+        for (int i = startingIndex; i < startingIndex + 3; i++)
+        {
+            mapObjects[i - startingIndex].Button.onClick.RemoveAllListeners();
+            if (modProfiles.Length > i)
+            {
+                ModProfile currentMod = modProfiles[i];
+                mapObjects[i - startingIndex].SetMap(currentMod);
+                mapObjects[i - startingIndex].Button.onClick.AddListener(() => { homePanel.SetActive(false); ShowModPanel(currentMod); });
+            }
+            else
+            {
+                mapObjects[i - startingIndex].SetMapLoading();
+            }
+        }
+    }
+
+    void ShowModPanel(ModProfile map)
+    {
+        modPanel.SetActive(true);
+
+        modBackButton.onClick.RemoveAllListeners();
+        modBackButton.onClick.AddListener(() =>
+        {
+            modPanel.SetActive(false);
+            ShowHomePanel(false);
+        });
+
+        mapObject.SetMap(map);
+        authorText.text = "Author: " + map.creator.username;
+        sizeText.text = "Size: " + Utility.GenerateHumanReadableStringForBytes(map.archiveFileSize);
+        subscribersText.text = "Subscribers: " + map.stats.subscriberTotal;
+
+        subscribeButton.onClick.RemoveAllListeners();
+        subscribeButton.interactable = true;
+        if (IsSubscribed(map))
+        {
+            subscribeButtonText.text = "Unsubscribe";
+            subscribeButton.onClick.AddListener(() =>
+            {
+                subscribeButton.interactable = false;
+                ModIOUnity.UnsubscribeFromMod(map.id,
+                    delegate (Result result)
+                    {
+                        if (result.Succeeded())
+                        {
+                            CacheLocalSubscribedModStatuses();
+                            ShowModPanel(map);
+                        }
+
+                    });
+            });
+        }
+        else
+        {
+            subscribeButtonText.text = "Subscribe";
+            subscribeButton.onClick.AddListener(() =>
+            {
+                subscribeButton.interactable = false;
+                ModIOUnity.SubscribeToMod(map.id,
+                delegate (Result result)
+                {
+                    if (result.Succeeded())
+                    {
+                        CacheLocalSubscribedModStatuses();
+                        ShowModPanel(map);
+                    }
+                    else
+                    {
+                        ShowErrorPanel("Failed to subscribe", modPanel);
+                    }
+                });
+            });
+        }
+    }
+
+    static void CacheLocalSubscribedModStatuses()
+    {
+        SubscribedMod[] subs = ModIOUnity.GetSubscribedMods(out Result result);
+        if (subs == null)
+        {
+            subs = new SubscribedMod[0];
+        }
+        subscribedMods = subs;
+    }
+
+    void GetAllAvailableMaps()
+    {
+        CacheLocalSubscribedModStatuses();
+
+        availableMaps.Clear();
+
+        availableMaps.Add("Default");
+        foreach (SubscribedMod mod in subscribedMods)
+        {
+            if (mod.status == SubscribedModStatus.Installed)
+            {
+                availableMaps.Add(mod.modProfile.name);
+            }
+        }
+
+        mapsList.options = availableMaps;
+        mapsList.SetOption(0);
+    }
+
+    string GetCurrentSelectedMapId()
+    {
+        string mapName = mapsList.GetOption();
+        foreach (SubscribedMod mod in subscribedMods)
+        {
+            if (mod.modProfile.name == mapName)
+            {
+                return mod.modProfile.id.id.ToString();
+            }
+        }
+        return "Default";
+    }
+
+    string GetCurrentSelectedMapDirectory()
+    {
+        string mapName = mapsList.GetOption();
+        foreach (SubscribedMod mod in subscribedMods)
+        {
+            if (mod.modProfile.name == mapName)
+            {
+                return mod.directory.ToString();
+            }
+        }
+        return "Default";
+    }
+
+    bool IsSubscribed(ModProfile mod)
+    {
+        foreach (var m in subscribedMods)
+        {
+            if (m.modProfile.id == mod.id)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    void ShowErrorPanel(string errorString, GameObject previuousPanel)
+    {
+        previuousPanel.SetActive(false);
+        errorPanel.SetActive(true);
+
+        errorText.text = errorString;
+
+        errorBackButton.onClick.RemoveAllListeners();
+        errorBackButton.onClick.AddListener(() =>
+        {
+            previuousPanel.SetActive(true);
+            errorPanel.SetActive(false);
+        });
+    }
 
     void CreateLobbyButtonPressed()
     {
         if (!photonView.IsMine) return;
-        Blink.instance.CloseEyes(true, () => PhotonVRManager.LeaveCurrentRoomToCreatePrivateRoom());
+        Blink.instance.CloseEyes(true, () => PhotonVRManager.LeaveCurrentRoomToCreatePrivateRoom(GetCurrentSelectedMapId(), GetCurrentSelectedMapDirectory()));
     }
 
 
@@ -151,7 +554,7 @@ public class TabletManager : MonoBehaviour
         if (!photonView.IsMine) return;
         if (lobbyName.text.Length == 0) return;
 
-        Blink.instance.CloseEyes(true, () => PhotonVRManager.LeaveCurrentRoomToJoinPrivateRoom(lobbyName.text));
+        Blink.instance.CloseEyes(true, () => PhotonVRManager.LeaveCurrentRoomToJoinPrivateRoom(lobbyName.text, GetCurrentSelectedMapId(), GetCurrentSelectedMapDirectory()));
 
     }
 
@@ -160,7 +563,7 @@ public class TabletManager : MonoBehaviour
     {
         if (!photonView.IsMine) return;
 
-        Blink.instance.CloseEyes(true, () => PhotonVRManager.LeaveCurrentRoomToJoinPublicRoom());
+        Blink.instance.CloseEyes(true, () => PhotonVRManager.LeaveCurrentRoomToJoinPublicRoom(GetCurrentSelectedMapId(), GetCurrentSelectedMapDirectory()));
 
     }
 
@@ -173,7 +576,6 @@ public class TabletManager : MonoBehaviour
 
     void SetPlayerNameOnSelect(string wut)
     {
-        Debug.Log(wut);
         keyboardManager.SetOutputField = playerName;
     }
     void SetName()

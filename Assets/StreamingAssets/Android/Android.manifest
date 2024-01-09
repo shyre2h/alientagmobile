@@ -1,0 +1,8 @@
+ManifestFileVersion: 0
+UnityVersion: 2023.2.1f1
+CRC: 3948932598
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: mapbundle
+      Dependencies: {}

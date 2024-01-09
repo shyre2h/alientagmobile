@@ -2,6 +2,7 @@
 {
     using UnityEngine;
     using System.Collections.Generic;
+    using DG.Tweening;
 
     public class Player : MonoBehaviour
     {
@@ -78,6 +79,8 @@
             velocityIndex = 0;
             lastPosition = transform.position;
             if (!audioSource) audioSource = GetComponent<AudioSource>();
+
+            //transform.DOLocalMoveX(-4f, 0.5f).SetLoops(-1, LoopType.Yoyo);
         }
 
         private Vector3 CurrentLeftHandPosition()
